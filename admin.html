@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+
+<style>
+body{font-family:Arial;background:#f2f2f2;padding:20px}
+table{border-collapse:collapse;width:100%;background:white}
+th,td{border:1px solid #ddd;padding:8px;text-align:center}
+th{background:#0d6e6e;color:white}
+.approve{background:green;color:white;border:none;padding:6px 10px}
+.reject{background:red;color:white;border:none;padding:6px 10px}
+</style>
+
+</head>
+<body>
+
+<script>
+let pass=prompt("Enter Password");
+if(pass!="78600"){
+document.body.innerHTML="Access Denied";
+}
+</script>
+
+<h2>Event Registration Requests</h2>
+
+<table id="tbl">
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Phone</th>
+<th>Event</th>
+<th>Date</th>
+<th>Place</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<script>
+
+const API="https://script.google.com/macros/s/AKfycby6eQXDtjKOAQiMljyFziC3I-uf10qxP829X1Yg82hb0603oyFNZk947iVhd_LK-7IY/exec";
+
+function loadData(){
+
+fetch(API)
+.then(r=>r.json())
+.then(data=>{
+
+let html="";
+
+data.forEach(d=>{
+
+html+=`
+<tr>
+<td>${d.id}</td>
+<td>${d.name}</td>
+<td>${d.phone}</td>
+<td>${d.event}</td>
+<td>${d.date}</td>
+<td>${d.place}</td>
+<td>${d.status}</td>
+<td>
+<button class="approve" onclick="approve(${d.id})">Approve</button>
+<button class="reject" onclick="reject(${d.id})">Reject</button>
+</td>
+</tr>
+`;
+
+});
+
+document.querySelector("#tbl tbody").innerHTML=html;
+
+});
+
+}
+
+loadData();
+
+function approve(id){
+fetch(API,{method:"POST",body:new URLSearchParams({id:id,action:"approve"})})
+.then(()=>loadData());
+}
+
+function reject(id){
+fetch(API,{method:"POST",body:new URLSearchParams({id:id,action:"reject"})})
+.then(()=>loadData());
+}
+
+</script>
+
+</body>
+</html>
